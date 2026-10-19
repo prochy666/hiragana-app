@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trénink Hiragany</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            text-align: center;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        /* Tlačidlo pre Dark Mode */
+        #darkModeToggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.3s;
+            z-index: 1000;
+        }
+        #darkModeToggle:hover {
+            background-color: #555;
+        }
+
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 550px;
+            width: 90%;
+            margin: 20px 0;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+        h1, h2, p { color: inherit; }
+        
+        .menu-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            margin: 10px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .menu-btn:hover { background-color: #45a049; }
+        .hidden { display: none !important; }
+        
+        /* Výběr skupin znaků */
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            text-align: left;
+            margin: 20px 0;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .checkbox-group label {
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+        .checkbox-group input {
+            margin-right: 10px;
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+            flex-shrink: 0;
+            -webkit-appearance: checkbox;
+        }
+
+        .progress {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .character-display {
+            font-size: 100px;
+            margin: 10px 0 20px;
+            color: #2c3e50;
+        }
+        .romaji-display {
+            font-size: 60px;
+            margin: 10px 0 20px;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            font-size: 24px;
+            padding: 10px;
+            width: 80%;
+            text-align: center;
+            margin-bottom: 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+            color: #333;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+        .submit-btn, .next-btn, .back-btn, .reveal-btn {
+            background-color: #008CBA;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .eval-btn-correct { background-color: #4CAF50; color: white; border: none; padding: 10px 20px; font-size: 18px; border-radius: 8px; cursor: pointer; margin: 5px; }
+        .eval-btn-incorrect { background-color: #f44336; color: white; border: none; padding: 10px 20px; font-size: 18px; border-radius: 8px; cursor: pointer; margin: 5px; }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .option-btn {
+            font-size: 40px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            cursor: pointer;
+            color: #333;
+            transition: 0.2s;
+        }
+        .option-btn:hover:not(:disabled) { background-color: #e9ecef; }
+        .option-btn:disabled { cursor: default; }
+        
+        #feedback1, #feedback2 {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px 0;
+            min-height: 35px;
+        }
+        .correct { color: #4CAF50; }
+        .incorrect { color: #f44336; }
+
+        /* Závěrečné vyhodnocení */
+        .results-box {
+            background: #fff3cd;
+            border: 1px solid #ffeeba;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .mistake-list {
+            list-style: none;
+            padding: 0;
+            font-size: 18px;
+        }
+        .mistake-list li {
+            padding: 5px 0;
+            border-bottom: 1px dashed #ccc;
+        }
+        .mistake-list li:last-child { border-bottom: none; }
+
+        /* ---------------------------------- */
+        /* DARK MODE STYLY                    */
+        /* ---------------------------------- */
+        body.dark-mode {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        body.dark-mode .container {
+            background-color: #1e1e1e;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        body.dark-mode .checkbox-group {
+            background: #2a2a2a;
+            border-color: #444;
+        }
+        body.dark-mode .character-display, 
+        body.dark-mode .romaji-display {
+            color: #e0e0e0;
+        }
+        body.dark-mode input[type="text"] {
+            background-color: #333;
+            color: #fff;
+            border-color: #555;
+        }
+        body.dark-mode .option-btn {
+            background-color: #2a2a2a;
+            border-color: #444;
+            color: #e0e0e0;
+        }
+        body.dark-mode .option-btn:hover:not(:disabled) { 
+            background-color: #3a3a3a; 
+        }
+        body.dark-mode .results-box {
+            background: #332b18;
+            border-color: #5a4b29;
+        }
+        body.dark-mode .mistake-list li {
+            border-bottom-color: #555;
+        }
+        body.dark-mode .progress {
+            color: #aaa;
+        }
+
+        /* Přizpůsobení pro mobilní zařízení */
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+                width: 95%;
+                margin: 10px 0;
+                margin-top: 60px; /* miesto pre dark mode tlacidlo */
+            }
+            .checkbox-group {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            .character-display { font-size: 80px; }
+            .romaji-display { font-size: 50px; }
+            input[type="text"] {
+                width: 100%;
+                box-sizing: border-box;
+            }
+            .submit-btn, .next-btn, .back-btn, .reveal-btn, .eval-btn-correct, .eval-btn-incorrect {
+                width: 100%;
+                margin: 10px 0;
+                box-sizing: border-box;
+            }
+            .options-grid { gap: 10px; }
+            .option-btn { font-size: 30px; padding: 15px; }
+            #feedback1, #feedback2 { font-size: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- TLAČIDLO PRE DARK MODE -->
+<button id="darkModeToggle" onclick="toggleDarkMode()">🌙 Dark Mode</button>
+
+<div class="container">
+    <!-- HLAVNÍ MENU -->
+    <div id="mainMenu">
+        <h1>Učím se Hiraganu</h1>
+        <p>Vyber si řady, které chceš procvičit:</p>
+        
+        <div class="checkbox-group" id="rowSelection">
+            <!-- Checkboxy se vygenerují přes JavaScript -->
+        </div>
+        <div>
+            <button class="submit-btn" style="font-size: 14px;" onclick="selectAll(true)">Vybrat vše</button>
+            <button class="back-btn" style="font-size: 14px;" onclick="selectAll(false)">Zrušit výběr</button>
+        </div>
+        
+        <br>
+        <p>Vyber si režim procvičování:</p>
+        <button class="menu-btn" onclick="startTest(1)">Vidím znak -> Píšu přepis</button>
+        <button class="menu-btn" onclick="startTest(2)">Vidím přepis -> Vybírám znak</button>
+        <button class="menu-btn" onclick="startTest(3)">Vidím přepis -> Vzpomínám si na znak (Kartičky)</button>
+    </div>
+
+    <!-- MÓD 1: PSANÍ -->
+    <div id="mode1" class="hidden">
+        <div class="progress" id="progress1"></div>
+        <h2>Co znamená tento znak?</h2>
+        <div id="charDisplay1" class="character-display"></div>
+        <input type="text" id="answerInput" placeholder="napiš přepis (např. a)" autocomplete="off">
+        <br>
+        <button class="submit-btn" id="checkBtn1" onclick="checkAnswer1()">Zkontrolovat</button>
+        <div id="feedback1"></div>
+        <button class="next-btn hidden" id="nextBtn1" onclick="nextQuestion()">Další znak</button>
+        <br><br>
+        <button class="back-btn" onclick="goHome()">Zpět do menu</button>
+    </div>
+
+    <!-- MÓD 2: VÝBĚR -->
+    <div id="mode2" class="hidden">
+        <div class="progress" id="progress2"></div>
+        <h2>Který znak je:</h2>
+        <div id="romajiDisplay2" class="romaji-display"></div>
+        <div class="options-grid" id="optionsGrid">
+            <!-- Tlačítka se vygenerují automaticky -->
+        </div>
+        <div id="feedback2"></div>
+        <button class="next-btn hidden" id="nextBtn2" onclick="nextQuestion()">Další znak</button>
+        <br><br>
+        <button class="back-btn" onclick="goHome()">Zpět do menu</button>
+    </div>
+
+    <!-- MÓD 3: KARTIČKY (STUDY CARDS) -->
+    <div id="mode3" class="hidden">
+        <div class="progress" id="progress3"></div>
+        <h2>Představte si, jak vypadá tento znak:</h2>
+        <div id="romajiDisplay3" class="romaji-display" style="margin-bottom: 0;"></div>
+        
+        <!-- Skrytý znak, který se ukáže až po kliknutí -->
+        <div id="charDisplay3" class="character-display hidden" style="color: #4CAF50;"></div>
+        
+        <button class="reveal-btn" id="revealBtn" onclick="revealCard()">Odhalit znak</button>
+        
+        <!-- Hodnotící tlačítka -->
+        <div id="evaluationButtons" class="hidden">
+            <p style="font-weight: bold; margin-bottom: 10px;">Pamatoval(a) jste si ho správně?</p>
+            <button class="eval-btn-correct" onclick="evaluateCard(true)">Ano, věděl(a) jsem</button>
+            <button class="eval-btn-incorrect" onclick="evaluateCard(false)">Ne, spletl(a) jsem se</button>
+        </div>
+        
+        <br><br>
+        <button class="back-btn" onclick="goHome()">Zpět do menu</button>
+    </div>
+
+    <!-- ZÁVĚREČNÉ VYHODNOCENÍ -->
+    <div id="results" class="hidden">
+        <h1>Konec testu! 🎉</h1>
+        <h2 id="scoreDisplay"></h2>
+        <div id="mistakesContainer" class="results-box hidden">
+            <h3>Tady jsi udělal chybu:</h3>
+            <ul class="mistake-list" id="mistakeList"></ul>
+        </div>
+        <br><br>
+        <button class="menu-btn" onclick="goHome()">Zpět na výběr znaků</button>
+    </div>
+</div>
+
+<script>
+    // Kompletní slovník rozdělený do řad
+    const hiraganaRows = [
+        { id: 'rowA', label: 'A, I, U, E, O', chars: [{char: 'あ', romaji: 'a'}, {char: 'い', romaji: 'i'}, {char: 'う', romaji: 'u'}, {char: 'え', romaji: 'e'}, {char: 'お', romaji: 'o'}] },
+        { id: 'rowK', label: 'KA, KI, KU...', chars: [{char: 'か', romaji: 'ka'}, {char: 'き', romaji: 'ki'}, {char: 'く', romaji: 'ku'}, {char: 'け', romaji: 'ke'}, {char: 'こ', romaji: 'ko'}] },
+        { id: 'rowS', label: 'SA, SHI, SU...', chars: [{char: 'さ', romaji: 'sa'}, {char: 'し', romaji: 'shi'}, {char: 'す', romaji: 'su'}, {char: 'せ', romaji: 'se'}, {char: 'そ', romaji: 'so'}] },
+        { id: 'rowT', label: 'TA, CHI, TSU...', chars: [{char: 'た', romaji: 'ta'}, {char: 'ち', romaji: 'chi'}, {char: 'つ', romaji: 'tsu'}, {char: 'て', romaji: 'te'}, {char: 'と', romaji: 'to'}] },
+        { id: 'rowN', label: 'NA, NI, NU...', chars: [{char: 'な', romaji: 'na'}, {char: 'に', romaji: 'ni'}, {char: 'ぬ', romaji: 'nu'}, {char: 'ね', romaji: 'ne'}, {char: 'の', romaji: 'no'}] },
+        { id: 'rowH', label: 'HA, HI, FU...', chars: [{char: 'は', romaji: 'ha'}, {char: 'ひ', romaji: 'hi'}, {char: 'ふ', romaji: 'fu'}, {char: 'へ', romaji: 'he'}, {char: 'ほ', romaji: 'ho'}] },
+        { id: 'rowM', label: 'MA, MI, MU...', chars: [{char: 'ま', romaji: 'ma'}, {char: 'み', romaji: 'mi'}, {char: 'む', romaji: 'mu'}, {char: 'め', romaji: 'me'}, {char: 'も', romaji: 'mo'}] },
+        { id: 'rowY', label: 'YA, YU, YO', chars: [{char: 'や', romaji: 'ya'}, {char: 'ゆ', romaji: 'yu'}, {char: 'よ', romaji: 'yo'}] },
+        { id: 'rowR', label: 'RA, RI, RU...', chars: [{char: 'ら', romaji: 'ra'}, {char: 'り', romaji: 'ri'}, {char: 'る', romaji: 'ru'}, {char: 'れ', romaji: 're'}, {char: 'ろ', romaji: 'ro'}] },
+        { id: 'rowW', label: 'WA, WO, N', chars: [{char: 'わ', romaji: 'wa'}, {char: 'を', romaji: 'wo'}, {char: 'ん', romaji: 'n'}] }
+    ];
+
+    const allCharactersFlat = hiraganaRows.flatMap(row => row.chars);
+
+    let currentMode = 1;
+    let activeQueue = [];
+    let currentIndex = 0;
+    let mistakes = [];
+    let correctCount = 0;
+    let currentQuestion = null;
+    let answered = false;
+
+    window.onload = () => {
+        const groupDiv = document.getElementById('rowSelection');
+        hiraganaRows.forEach((row, index) => {
+            let label = document.createElement('label');
+            label.innerHTML = `<input type="checkbox" class="row-checkbox" value="${index}" checked> ${row.label}`;
+            groupDiv.appendChild(label);
+        });
+    }
+
+    // Funkcia na prepínanie Dark Mode
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+        const btn = document.getElementById('darkModeToggle');
+        
+        if (document.body.classList.contains('dark-mode')) {
+            btn.innerText = '☀️ Light Mode';
+            btn.style.backgroundColor = '#f4f4f9';
+            btn.style.color = '#333';
+        } else {
+            btn.innerText = '🌙 Dark Mode';
+            btn.style.backgroundColor = '#333';
+            btn.style.color = '#fff';
+        }
+    }
+
+    function selectAll(state) {
+        document.querySelectorAll('.row-checkbox').forEach(cb => cb.checked = state);
+    }
+
+    function goHome() {
+        document.getElementById('mainMenu').classList.remove('hidden');
+        document.getElementById('mode1').classList.add('hidden');
+        document.getElementById('mode2').classList.add('hidden');
+        document.getElementById('mode3').classList.add('hidden');
+        document.getElementById('results').classList.add('hidden');
+    }
+
+    function startTest(mode) {
+        currentMode = mode;
+        activeQueue = [];
+        mistakes = [];
+        correctCount = 0;
+        currentIndex = 0;
+
+        const checkboxes = document.querySelectorAll('.row-checkbox');
+        checkboxes.forEach(cb => {
+            if (cb.checked) {
+                activeQueue = activeQueue.concat(hiraganaRows[cb.value].chars);
+            }
+        });
+
+        if (activeQueue.length === 0) {
+            alert("Musíš vybrat alespoň jednu řadu znaků!");
+            return;
+        }
+
+        // Zamíchání pole
+        for (let i = activeQueue.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [activeQueue[i], activeQueue[j]] = [activeQueue[j], activeQueue[i]];
+        }
+
+        document.getElementById('mainMenu').classList.add('hidden');
+        document.getElementById(`mode${mode}`).classList.remove('hidden');
+        
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        answered = false;
+        
+        if (currentMode === 1 || currentMode === 2) {
+            document.getElementById(`feedback${currentMode}`).innerHTML = '';
+            document.getElementById(`nextBtn${currentMode}`).classList.add('hidden');
+        }
+        
+        if (currentMode === 1) {
+            document.getElementById('checkBtn1').classList.remove('hidden');
+        }
+
+        if (currentMode === 3) {
+            document.getElementById('charDisplay3').classList.add('hidden');
+            document.getElementById('evaluationButtons').classList.add('hidden');
+            document.getElementById('revealBtn').classList.remove('hidden');
+        }
+
+        document.getElementById(`progress${currentMode}`).innerText = `Znak ${currentIndex + 1} z ${activeQueue.length}`;
+        currentQuestion = activeQueue[currentIndex];
+
+        if (currentMode === 1) {
+            document.getElementById('answerInput').value = '';
+            document.getElementById('answerInput').focus();
+            document.getElementById('charDisplay1').innerText = currentQuestion.char;
+        } else if (currentMode === 2) {
+            document.getElementById('romajiDisplay2').innerText = currentQuestion.romaji;
+            generateOptionsForMode2();
+        } else if (currentMode === 3) {
+            document.getElementById('romajiDisplay3').innerText = currentQuestion.romaji;
+            document.getElementById('charDisplay3').innerText = currentQuestion.char;
+        }
+    }
+
+    function nextQuestion() {
+        currentIndex++;
+        if (currentIndex >= activeQueue.length) {
+            showResults();
+        } else {
+            loadQuestion();
+        }
+    }
+
+    // MÓD 1
+    function checkAnswer1() {
+        if (answered) return;
+        let userAnswer = document.getElementById('answerInput').value.trim().toLowerCase();
+        if (userAnswer === "") return;
+
+        answered = true;
+        let feedback = document.getElementById('feedback1');
+        document.getElementById('checkBtn1').classList.add('hidden');
+        
+        if (userAnswer === currentQuestion.romaji) {
+            feedback.innerHTML = '<span class="correct">Správně! 🎉</span>';
+            correctCount++;
+        } else {
+            feedback.innerHTML = `<span class="incorrect">Špatně. Správně je: <b>${currentQuestion.romaji}</b></span>`;
+            mistakes.push(currentQuestion);
+        }
+        document.getElementById('nextBtn1').classList.remove('hidden');
+        document.getElementById('nextBtn1').focus();
+    }
+
+    document.getElementById("answerInput").addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            if (!answered) {
+                checkAnswer1();
+            } else {
+                nextQuestion();
+            }
+        }
+    });
+
+    // MÓD 2
+    function generateOptionsForMode2() {
+        let options = [currentQuestion];
+        while (options.length < 4) {
+            let randomChar = allCharactersFlat[Math.floor(Math.random() * allCharactersFlat.length)];
+            if (!options.some(opt => opt.romaji === randomChar.romaji)) {
+                options.push(randomChar);
+            }
+        }
+        options.sort(() => Math.random() - 0.5);
+
+        let grid = document.getElementById('optionsGrid');
+        grid.innerHTML = '';
+        options.forEach(opt => {
+            let btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt.char;
+            btn.onclick = () => checkAnswer2(opt.romaji, btn);
+            grid.appendChild(btn);
+        });
+    }
+
+    function checkAnswer2(selectedRomaji, btnElement) {
+        if (answered) return;
+        answered = true;
+
+        let feedback = document.getElementById('feedback2');
+        let buttons = document.getElementsByClassName('option-btn');
+
+        for(let b of buttons) { b.disabled = true; }
+
+        if (selectedRomaji === currentQuestion.romaji) {
+            feedback.innerHTML = '<span class="correct">Správně! 🎉</span>';
+            // V tmavom rezime nechavame zelenu/cervenu rovnaku
+            btnElement.style.backgroundColor = '#d4edda';
+            btnElement.style.borderColor = '#c3e6cb';
+            btnElement.style.color = '#333';
+            correctCount++;
+        } else {
+            feedback.innerHTML = '<span class="incorrect">Špatně!</span>';
+            btnElement.style.backgroundColor = '#f8d7da';
+            btnElement.style.borderColor = '#f5c6cb';
+            btnElement.style.color = '#333';
+            mistakes.push(currentQuestion);
+            
+            for(let b of buttons) {
+                if(b.innerText === currentQuestion.char) {
+                    b.style.backgroundColor = '#d4edda';
+                    b.style.borderColor = '#c3e6cb';
+                    b.style.color = '#333';
+                }
+            }
+        }
+        document.getElementById('nextBtn2').classList.remove('hidden');
+        document.getElementById('nextBtn2').focus();
+    }
+
+    // MÓD 3 (KARTIČKY)
+    function revealCard() {
+        document.getElementById('revealBtn').classList.add('hidden');
+        document.getElementById('charDisplay3').classList.remove('hidden');
+        document.getElementById('evaluationButtons').classList.remove('hidden');
+    }
+
+    function evaluateCard(isCorrect) {
+        if (isCorrect) {
+            correctCount++;
+        } else {
+            mistakes.push(currentQuestion);
+        }
+        nextQuestion();
+    }
+
+    // VÝSLEDKY
+    function showResults() {
+        document.getElementById('mode1').classList.add('hidden');
+        document.getElementById('mode2').classList.add('hidden');
+        document.getElementById('mode3').classList.add('hidden');
+        document.getElementById('results').classList.remove('hidden');
+
+        let percent = Math.round((correctCount / activeQueue.length) * 100);
+        document.getElementById('scoreDisplay').innerHTML = `Tvoje úspěšnost: <span style="color: ${percent > 79 ? '#4CAF50' : '#f44336'}">${correctCount} / ${activeQueue.length} (${percent}%)</span>`;
+
+        let mistakesContainer = document.getElementById('mistakesContainer');
+        let mistakeList = document.getElementById('mistakeList');
+        mistakeList.innerHTML = '';
+
+        if (mistakes.length > 0) {
+            mistakesContainer.classList.remove('hidden');
+            mistakes.forEach(m => {
+                let li = document.createElement('li');
+                li.innerHTML = `<b style="font-size:24px;">${m.char}</b> = ${m.romaji}`;
+                mistakeList.appendChild(li);
+            });
+        } else {
+            mistakesContainer.classList.add('hidden');
+        }
+    }
+</script>
+
+</body>
+</html>
