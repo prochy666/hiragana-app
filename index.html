@@ -7,48 +7,25 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
+            background-color: #121212;
+            color: #e0e0e0;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
             text-align: center;
-            transition: background-color 0.3s, color 0.3s;
         }
-        
-        /* Tlačidlo pre Dark Mode */
-        #darkModeToggle {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            padding: 10px 15px;
-            background-color: #333;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: 0.3s;
-            z-index: 1000;
-        }
-        #darkModeToggle:hover {
-            background-color: #555;
-        }
-
         .container {
-            background-color: white;
+            background-color: #1e1e1e;
             padding: 40px;
             border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
             max-width: 550px;
             width: 90%;
             margin: 20px 0;
-            transition: background-color 0.3s, box-shadow 0.3s;
         }
-        h1, h2, p { color: inherit; }
-        
+        h1, h2 { color: #ffffff; }
         .menu-btn {
             background-color: #4CAF50;
             color: white;
@@ -72,11 +49,10 @@
             gap: 10px;
             text-align: left;
             margin: 20px 0;
-            background: #f8f9fa;
+            background: #2a2a2a;
             padding: 15px;
             border-radius: 10px;
-            border: 1px solid #ddd;
-            transition: background-color 0.3s, border-color 0.3s;
+            border: 1px solid #444;
         }
         .checkbox-group label {
             cursor: pointer;
@@ -95,7 +71,7 @@
 
         .progress {
             font-size: 14px;
-            color: #666;
+            color: #aaa;
             margin-bottom: 10px;
             font-weight: bold;
         }
@@ -103,12 +79,12 @@
         .character-display {
             font-size: 100px;
             margin: 10px 0 20px;
-            color: #2c3e50;
+            color: #90caf9;
         }
         .romaji-display {
             font-size: 60px;
             margin: 10px 0 20px;
-            color: #2c3e50;
+            color: #90caf9;
             font-weight: bold;
         }
         input[type="text"] {
@@ -117,11 +93,14 @@
             width: 80%;
             text-align: center;
             margin-bottom: 20px;
-            border: 2px solid #ddd;
+            background-color: #2a2a2a;
+            color: #ffffff;
+            border: 2px solid #555;
             border-radius: 8px;
-            background-color: #fff;
-            color: #333;
-            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #90caf9;
         }
         .submit-btn, .next-btn, .back-btn, .reveal-btn {
             background-color: #008CBA;
@@ -145,15 +124,15 @@
         .option-btn {
             font-size: 40px;
             padding: 20px;
-            background-color: #f8f9fa;
-            border: 2px solid #ddd;
+            background-color: #2a2a2a;
+            color: #e0e0e0;
+            border: 2px solid #555;
             border-radius: 10px;
             cursor: pointer;
-            color: #333;
             transition: 0.2s;
         }
-        .option-btn:hover:not(:disabled) { background-color: #e9ecef; }
-        .option-btn:disabled { cursor: default; }
+        .option-btn:hover:not(:disabled) { background-color: #3d3d3d; }
+        .option-btn:disabled { cursor: default; color: #888; }
         
         #feedback1, #feedback2 {
             font-size: 24px;
@@ -166,12 +145,12 @@
 
         /* Závěrečné vyhodnocení */
         .results-box {
-            background: #fff3cd;
-            border: 1px solid #ffeeba;
+            background: #332b00;
+            border: 1px solid #665c00;
             padding: 20px;
             border-radius: 10px;
             margin-top: 20px;
-            transition: background-color 0.3s, border-color 0.3s;
+            color: #e0e0e0;
         }
         .mistake-list {
             list-style: none;
@@ -180,52 +159,9 @@
         }
         .mistake-list li {
             padding: 5px 0;
-            border-bottom: 1px dashed #ccc;
+            border-bottom: 1px dashed #555;
         }
         .mistake-list li:last-child { border-bottom: none; }
-
-        /* ---------------------------------- */
-        /* DARK MODE STYLY                    */
-        /* ---------------------------------- */
-        body.dark-mode {
-            background-color: #121212;
-            color: #e0e0e0;
-        }
-        body.dark-mode .container {
-            background-color: #1e1e1e;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
-        body.dark-mode .checkbox-group {
-            background: #2a2a2a;
-            border-color: #444;
-        }
-        body.dark-mode .character-display, 
-        body.dark-mode .romaji-display {
-            color: #e0e0e0;
-        }
-        body.dark-mode input[type="text"] {
-            background-color: #333;
-            color: #fff;
-            border-color: #555;
-        }
-        body.dark-mode .option-btn {
-            background-color: #2a2a2a;
-            border-color: #444;
-            color: #e0e0e0;
-        }
-        body.dark-mode .option-btn:hover:not(:disabled) { 
-            background-color: #3a3a3a; 
-        }
-        body.dark-mode .results-box {
-            background: #332b18;
-            border-color: #5a4b29;
-        }
-        body.dark-mode .mistake-list li {
-            border-bottom-color: #555;
-        }
-        body.dark-mode .progress {
-            color: #aaa;
-        }
 
         /* Přizpůsobení pro mobilní zařízení */
         @media (max-width: 600px) {
@@ -233,7 +169,6 @@
                 padding: 20px;
                 width: 95%;
                 margin: 10px 0;
-                margin-top: 60px; /* miesto pre dark mode tlacidlo */
             }
             .checkbox-group {
                 grid-template-columns: 1fr;
@@ -257,9 +192,6 @@
     </style>
 </head>
 <body>
-
-<!-- TLAČIDLO PRE DARK MODE -->
-<button id="darkModeToggle" onclick="toggleDarkMode()">🌙 Dark Mode</button>
 
 <div class="container">
     <!-- HLAVNÍ MENU -->
@@ -377,22 +309,6 @@
             label.innerHTML = `<input type="checkbox" class="row-checkbox" value="${index}" checked> ${row.label}`;
             groupDiv.appendChild(label);
         });
-    }
-
-    // Funkcia na prepínanie Dark Mode
-    function toggleDarkMode() {
-        document.body.classList.toggle('dark-mode');
-        const btn = document.getElementById('darkModeToggle');
-        
-        if (document.body.classList.contains('dark-mode')) {
-            btn.innerText = '☀️ Light Mode';
-            btn.style.backgroundColor = '#f4f4f9';
-            btn.style.color = '#333';
-        } else {
-            btn.innerText = '🌙 Dark Mode';
-            btn.style.backgroundColor = '#333';
-            btn.style.color = '#fff';
-        }
     }
 
     function selectAll(state) {
@@ -546,23 +462,19 @@
 
         if (selectedRomaji === currentQuestion.romaji) {
             feedback.innerHTML = '<span class="correct">Správně! 🎉</span>';
-            // V tmavom rezime nechavame zelenu/cervenu rovnaku
-            btnElement.style.backgroundColor = '#d4edda';
-            btnElement.style.borderColor = '#c3e6cb';
-            btnElement.style.color = '#333';
+            btnElement.style.backgroundColor = '#1e4620';
+            btnElement.style.borderColor = '#2c6b2f';
             correctCount++;
         } else {
             feedback.innerHTML = '<span class="incorrect">Špatně!</span>';
-            btnElement.style.backgroundColor = '#f8d7da';
-            btnElement.style.borderColor = '#f5c6cb';
-            btnElement.style.color = '#333';
+            btnElement.style.backgroundColor = '#4a1a1e';
+            btnElement.style.borderColor = '#7a272d';
             mistakes.push(currentQuestion);
             
             for(let b of buttons) {
                 if(b.innerText === currentQuestion.char) {
-                    b.style.backgroundColor = '#d4edda';
-                    b.style.borderColor = '#c3e6cb';
-                    b.style.color = '#333';
+                    b.style.backgroundColor = '#1e4620';
+                    b.style.borderColor = '#2c6b2f';
                 }
             }
         }
