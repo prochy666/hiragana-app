@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trénink Hiragany</title>
+    <title>Trénink Japonských Znaků</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -42,6 +42,32 @@
         .menu-btn:hover { background-color: #45a049; }
         .hidden { display: none !important; }
         
+        /* Výběr abecedy */
+        .alphabet-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #4CAF50;
+        }
+        .alphabet-group label {
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            color: #90caf9;
+        }
+        .alphabet-group input {
+            margin-right: 8px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
         /* Výběr skupin znaků */
         .checkbox-group {
             display: grid;
@@ -196,9 +222,15 @@
 <div class="container">
     <!-- HLAVNÍ MENU -->
     <div id="mainMenu">
-        <h1>Učím se Hiraganu</h1>
-        <p>Vyber si řady, které chceš procvičit:</p>
+        <h1 id="mainTitle">Učím se znaky</h1>
         
+        <p>Vyber si abecedu:</p>
+        <div class="alphabet-group">
+            <label><input type="radio" name="alphabet" value="hiragana" checked onchange="updateTitle()"> Hiragana</label>
+            <label><input type="radio" name="alphabet" value="katakana" onchange="updateTitle()"> Katakana</label>
+        </div>
+
+        <p>Vyber si řady, které chceš procvičit:</p>
         <div class="checkbox-group" id="rowSelection">
             <!-- Checkboxy se vygenerují přes JavaScript -->
         </div>
@@ -278,7 +310,7 @@
 </div>
 
 <script>
-    // Kompletní slovník rozdělený do řad
+    // Slovník pro Hiraganu
     const hiraganaRows = [
         { id: 'rowA', label: 'A, I, U, E, O', chars: [{char: 'あ', romaji: 'a'}, {char: 'い', romaji: 'i'}, {char: 'う', romaji: 'u'}, {char: 'え', romaji: 'e'}, {char: 'お', romaji: 'o'}] },
         { id: 'rowK', label: 'KA, KI, KU...', chars: [{char: 'か', romaji: 'ka'}, {char: 'き', romaji: 'ki'}, {char: 'く', romaji: 'ku'}, {char: 'け', romaji: 'ke'}, {char: 'こ', romaji: 'ko'}] },
@@ -292,8 +324,21 @@
         { id: 'rowW', label: 'WA, WO, N', chars: [{char: 'わ', romaji: 'wa'}, {char: 'を', romaji: 'wo'}, {char: 'ん', romaji: 'n'}] }
     ];
 
-    const allCharactersFlat = hiraganaRows.flatMap(row => row.chars);
+    // Slovník pro Katakanu
+    const katakanaRows = [
+        { id: 'rowA', label: 'A, I, U, E, O', chars: [{char: 'ア', romaji: 'a'}, {char: 'イ', romaji: 'i'}, {char: 'ウ', romaji: 'u'}, {char: 'エ', romaji: 'e'}, {char: 'オ', romaji: 'o'}] },
+        { id: 'rowK', label: 'KA, KI, KU...', chars: [{char: 'カ', romaji: 'ka'}, {char: 'キ', romaji: 'ki'}, {char: 'ク', romaji: 'ku'}, {char: 'ケ', romaji: 'ke'}, {char: 'コ', romaji: 'ko'}] },
+        { id: 'rowS', label: 'SA, SHI, SU...', chars: [{char: 'サ', romaji: 'sa'}, {char: 'シ', romaji: 'shi'}, {char: 'ス', romaji: 'su'}, {char: 'セ', romaji: 'se'}, {char: 'ソ', romaji: 'so'}] },
+        { id: 'rowT', label: 'TA, CHI, TSU...', chars: [{char: 'タ', romaji: 'ta'}, {char: 'チ', romaji: 'chi'}, {char: 'ツ', romaji: 'tsu'}, {char: 'テ', romaji: 'te'}, {char: 'ト', romaji: 'to'}] },
+        { id: 'rowN', label: 'NA, NI, NU...', chars: [{char: 'ナ', romaji: 'na'}, {char: 'ニ', romaji: 'ni'}, {char: 'ヌ', romaji: 'nu'}, {char: 'ネ', romaji: 'ne'}, {char: 'ノ', romaji: 'no'}] },
+        { id: 'rowH', label: 'HA, HI, FU...', chars: [{char: 'ハ', romaji: 'ha'}, {char: 'ヒ', romaji: 'hi'}, {char: 'フ', romaji: 'fu'}, {char: 'ヘ', romaji: 'he'}, {char: 'ホ', romaji: 'ho'}] },
+        { id: 'rowM', label: 'MA, MI, MU...', chars: [{char: 'マ', romaji: 'ma'}, {char: 'ミ', romaji: 'mi'}, {char: 'ム', romaji: 'mu'}, {char: 'メ', romaji: 'me'}, {char: 'モ', romaji: 'mo'}] },
+        { id: 'rowY', label: 'YA, YU, YO', chars: [{char: 'ヤ', romaji: 'ya'}, {char: 'ユ', romaji: 'yu'}, {char: 'ヨ', romaji: 'yo'}] },
+        { id: 'rowR', label: 'RA, RI, RU...', chars: [{char: 'ラ', romaji: 'ra'}, {char: 'リ', romaji: 'ri'}, {char: 'ル', romaji: 'ru'}, {char: 'レ', romaji: 're'}, {char: 'ロ', romaji: 'ro'}] },
+        { id: 'rowW', label: 'WA, WO, N', chars: [{char: 'ワ', romaji: 'wa'}, {char: 'ヲ', romaji: 'wo'}, {char: 'ン', romaji: 'n'}] }
+    ];
 
+    let allCharactersFlat = []; // Naplní se dynamicky podle zvolené abecedy
     let currentMode = 1;
     let activeQueue = [];
     let currentIndex = 0;
@@ -303,12 +348,24 @@
     let answered = false;
 
     window.onload = () => {
+        updateTitle();
+        // Jelikož rozložení skupin je pro hiraganu i katakanu stejné, stačí vygenerovat checkboxy z jedné proměnné
         const groupDiv = document.getElementById('rowSelection');
         hiraganaRows.forEach((row, index) => {
             let label = document.createElement('label');
             label.innerHTML = `<input type="checkbox" class="row-checkbox" value="${index}" checked> ${row.label}`;
             groupDiv.appendChild(label);
         });
+    }
+
+    function updateTitle() {
+        const alphabet = document.querySelector('input[name="alphabet"]:checked').value;
+        const title = document.getElementById('mainTitle');
+        if(alphabet === 'hiragana') {
+            title.innerText = "Učím se Hiraganu";
+        } else {
+            title.innerText = "Učím se Katakanu";
+        }
     }
 
     function selectAll(state) {
@@ -330,10 +387,17 @@
         correctCount = 0;
         currentIndex = 0;
 
+        // Zjištění vybrané abecedy a nastavení aktuálního slovníku
+        const alphabet = document.querySelector('input[name="alphabet"]:checked').value;
+        const currentRows = alphabet === 'hiragana' ? hiraganaRows : katakanaRows;
+        
+        // Připravení znaků pro generování špatných odpovědí v módu 2
+        allCharactersFlat = currentRows.flatMap(row => row.chars);
+
         const checkboxes = document.querySelectorAll('.row-checkbox');
         checkboxes.forEach(cb => {
             if (cb.checked) {
-                activeQueue = activeQueue.concat(hiraganaRows[cb.value].chars);
+                activeQueue = activeQueue.concat(currentRows[cb.value].chars);
             }
         });
 
